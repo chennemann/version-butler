@@ -1,0 +1,75 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'de.chennemann.libraries:version-butler:1.0.0'
+    }
+}
+
+plugins {
+    id "com.jfrog.bintray" version "1.7"
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+
+    apply plugin: 'groovy'
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+
+    apply plugin: 'version-butler'
+
+    apply from: 'credentials.gradle'
+}
+
+def semanticVersionName = versionbutler.semanticVersionName
+
+group = 'de.chennemann.libraries'
+version = semanticVersionName
+
+publishing {
+    publications {
+        VersionButler(MavenPublication) {
+            from components.java
+            groupId 'de.chennemann.libraries'
+            artifactId 'version-butler'
+            version semanticVersionName
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+    publications = ['VersionButler']
+    pkg {
+        repo = 'maven'
+        name = 'version-butler'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/chennemann/version-butler.git'
+        githubRepo = 'chennemann/version-butler'
+        version {
+            name = semanticVersionName
+            desc = 'Gradle Plugin for automatic versioning'
+            released = new Date()
+        }
+    }
+}
+
+versionbutler {
+    dependentTaskName = "build"
+}
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile 'nu.studer:java-ordered-properties:1.0.1'
+    compile gradleApi()
+    testCompile 'junit:junit:4.12'
+}
