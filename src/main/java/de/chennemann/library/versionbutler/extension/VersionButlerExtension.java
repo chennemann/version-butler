@@ -36,8 +36,8 @@ public class VersionButlerExtension {
      * With every increment of the major, minor or patch version the version code will be increased as well.
      * @return The version code in its string representation.
      */
-    public String getVersionCode() {
-        return propertyHandler.getVersionCode();
+    public int getVersionCode() {
+        return Integer.parseInt(propertyHandler.getVersionCode());
     }
 
     /**
